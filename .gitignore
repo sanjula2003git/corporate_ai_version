@@ -1,0 +1,31 @@
+# ───────── Python / backend ─────────
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Runtime database (auto-created + seeded on first run) — never commit it
+*.db
+*.sqlite3
+
+# ───────── Node / frontend ─────────
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ───────── Secrets / env ─────────
+.env
+.env.*
+!.env.example
+!*/.env.example
+
+# ───────── Editor / OS ─────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

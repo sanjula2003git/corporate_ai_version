@@ -1,0 +1,19 @@
+# Render Blueprint — deploys the FastAPI backend as a Web Service.
+# In Render: New + → Blueprint → pick this repo. Then set the secret env vars
+# (GEMINI_API_KEY, FRONTEND_ORIGINS) in the dashboard.
+#
+# Note: SQLite on the free tier is EPHEMERAL — the database resets on every
+# redeploy/restart. Add a persistent disk or use Render Postgres for durable data.
+services:
+  - type: web
+    name: corporate-ai-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false          # set in the Render dashboard (secret)
+      - key: FRONTEND_ORIGINS
+        sync: false          # e.g. https://your-app.vercel.app
