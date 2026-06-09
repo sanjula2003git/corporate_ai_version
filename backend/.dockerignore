@@ -1,0 +1,21 @@
+# Keep these OUT of the image — smaller, faster, safer builds.
+# (Like .gitignore, but for what gets copied into the container.)
+
+# Python cruft
+__pycache__/
+*.pyc
+*.pyo
+
+# Local database — the container re-seeds its own on first run.
+# Never bake local/seeded data into the image.
+*.db
+*.sqlite3
+
+# Secrets — API keys are injected at runtime (Cloud Run env vars), NOT baked in.
+.env
+.env.*
+
+# Local virtual environments
+.venv/
+venv/
+env/
