@@ -82,10 +82,44 @@ Frontend and backend are **two separate programs** → two separate services:
 | `backend/` | **Render** | `render.yaml` (Blueprint). Set `GEMINI_API_KEY` + `FRONTEND_ORIGINS` |
 | `frontend/` | **Vercel** | Root Directory = `frontend`. Set `VITE_API_URL` to the Render URL |
 
-Wire-up checklist:
-1. Deploy the backend first; note its URL (e.g. `https://your-api.onrender.com`).
-2. On Vercel set `VITE_API_URL` to that URL and deploy the frontend.
-3. On Render set `FRONTEND_ORIGINS` to the Vercel URL (e.g. `https://your-app.vercel.app`) so CORS allows it.
+Source repo: <https://github.com/sanjula2003git/corporate_ai_version>
+
+> ⚠️ **Order matters.** The two services reference each other, so deploy the
+> **backend first**, then the frontend, then come back and give the backend the
+> frontend's URL. Follow the steps in order.
+
+### Step 1 — Deploy the backend (Render)
+
+1. Push to GitHub (already done for the repo above).
+2. In the [Render dashboard](https://dashboard.render.com): **New + → Blueprint**,
+   then select the `corporate_ai_version` repo. Render auto-detects `render.yaml`
+   and creates the `corporate-ai-backend` web service (`rootDir: backend`).
+3. Set the secret env vars in the service's **Environment** tab:
+   - `GEMINI_API_KEY` — your [Google AI Studio](https://aistudio.google.com/apikey)
+     key (free tier). *Optional* — without it the chat falls back to a mock reply.
+   - `FRONTEND_ORIGINS` — leave blank for now; you'll fill it in Step 3.
+4. Deploy, then **copy the backend URL**, e.g. `https://corporate-ai-backend.onrender.com`.
+   Open `<that-url>/docs` to confirm the API is live.
+
+### Step 2 — Deploy the frontend (Vercel)
+
+1. In [Vercel](https://vercel.com/new): **Add New → Project** → import
+   `corporate_ai_version`.
+2. Set **Root Directory = `frontend`** (the Vite app lives there).
+   Build command (`npm run build`) and output dir (`dist`) come from `vercel.json`.
+3. Add an environment variable:
+   - `VITE_API_URL` = the Render backend URL from Step 1
+     (e.g. `https://corporate-ai-backend.onrender.com`). Vite bakes this in at
+     build time, so **redeploy** if you change it later.
+4. Deploy, then **copy the Vercel URL**, e.g. `https://corporate-ai-version.vercel.app`.
+
+### Step 3 — Connect them (CORS)
+
+1. Back in Render → the backend's **Environment** tab, set:
+   - `FRONTEND_ORIGINS` = your Vercel URL (e.g. `https://corporate-ai-version.vercel.app`).
+     Comma-separate if you have more than one (e.g. a custom domain).
+2. Render redeploys automatically. Open the Vercel URL and log in — the frontend
+   now talks to the backend, and `superuser` / `superuser123` works once the DB seeds.
 
 > ⚠️ SQLite on Render's free tier is **ephemeral** — the database resets on each
 > redeploy/restart. Attach a persistent disk or use Postgres for durable data.
