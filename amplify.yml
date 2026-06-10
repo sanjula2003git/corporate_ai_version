@@ -1,0 +1,25 @@
+# AWS Amplify Hosting build settings (monorepo).
+# This repo holds both backend and frontend, so we tell Amplify the app lives
+# in the "frontend" folder and builds with Vite into "dist".
+#
+# The backend URL is supplied as an Amplify environment variable named
+# VITE_API_URL (set it in the Amplify console). Vite bakes any VITE_-prefixed
+# env var into the build — IMPORTANT: no trailing slash on the URL.
+version: 1
+applications:
+  - appRoot: frontend
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
