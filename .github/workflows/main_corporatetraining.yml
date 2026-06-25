@@ -68,7 +68,7 @@ jobs:
         with:
           app-name: 'Corporatetraining'
           slot-name: 'Production'
-          package: backend
+          package: .
 
 
 
