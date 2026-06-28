@@ -1,0 +1,4 @@
+# Shell scripts MUST keep LF endings — they run on Linux (Azure App Service).
+# CRLF would make `bash startup.sh` fail with "\r: command not found".
+*.sh text eol=lf
+startup.sh text eol=lf

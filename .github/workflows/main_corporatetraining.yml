@@ -69,6 +69,10 @@ jobs:
           app-name: 'Corporatetraining'
           slot-name: 'Production'
           package: .
+          # FastAPI needs an explicit startup command — Azure's Python stack
+          # otherwise defaults to gunicorn against a WSGI app and 502s. This
+          # runs the startup.sh in the deployed backend/ folder (uvicorn on $PORT).
+          startup-command: 'bash startup.sh'
 
 
 

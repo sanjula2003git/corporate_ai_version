@@ -1,0 +1,16 @@
+# Backend dependencies — kept here (inside backend/) so BOTH the GitHub Actions
+# workflow (working-directory: backend) AND Azure App Service's Oryx builder,
+# which looks for requirements.txt at the root of the deployed package, can find
+# it. This mirrors the repo-root requirements.txt.
+fastapi            # web framework + auto /docs
+uvicorn[standard]  # the ASGI server
+gunicorn           # process manager Azure/Oryx uses to run uvicorn workers
+PyJWT              # login tokens (access pass)
+bcrypt             # password hashing
+python-multipart   # login form support
+sqlmodel           # database toolkit (SQLAlchemy + Pydantic) — talks to SQLite
+
+# --- AI chat extras ---
+python-dotenv      # loads GEMINI_API_KEY / ANTHROPIC_API_KEY from a .env file
+# Google Gemini (free tier) is called over plain REST — NO package needed.
+anthropic          # ONLY needed if you choose Anthropic Claude instead of Gemini

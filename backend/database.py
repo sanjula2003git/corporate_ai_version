@@ -23,8 +23,25 @@ from models import (UserDB, StudentDB, TrainerDB, CourseDB, CertificateDB,
                     AttendanceDB, MaterialDB, AssignmentDB, SubmissionDB,
                     ClassSessionDB)
 
-# The database is just one file sitting next to this code.
-DATABASE_URL = "sqlite:///training.db"
+# Where the database file lives.
+#   • Local dev: a file "training.db" next to this code (the default).
+#   • Azure App Service: set DATABASE_URL (or DB_PATH) to a path under /home,
+#     which is PERSISTENT storage that survives restarts/redeploys, e.g.
+#       DATABASE_URL=sqlite:////home/data/training.db
+#     (note the 4 slashes — an ABSOLUTE path). Without this, the DB sits in the
+#     app's working dir and is wiped on each redeploy.
+import os
+
+_db_path = os.environ.get("DB_PATH")  # e.g. /home/data/training.db
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    f"sqlite:///{_db_path}" if _db_path else "sqlite:///training.db",
+)
+
+# Make sure the parent folder exists for absolute SQLite paths (Azure /home/data).
+if DATABASE_URL.startswith("sqlite:////"):
+    _abs = "/" + DATABASE_URL.split("sqlite:////", 1)[1]
+    os.makedirs(os.path.dirname(_abs), exist_ok=True)
 
 engine = create_engine(
     DATABASE_URL,

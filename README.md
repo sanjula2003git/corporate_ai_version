@@ -77,14 +77,14 @@ Open **http://localhost:5273** and log in.
 
 Frontend and backend are **two separate programs** → two separate services:
 
-| Part | Host | How |
-|------|------|-----|
-| `backend/` | **Render** | `render.yaml` (Blueprint). Set `GEMINI_API_KEY` + `FRONTEND_ORIGINS` |
-| `frontend/` | **Vercel** | Root Directory = `frontend`. Set `VITE_API_URL` to the Render URL |
+| Part | Host (recommended) | How |
+|------|--------------------|-----|
+| `backend/` | **Azure App Service** | GitHub Actions (`main_corporatetraining.yml`, OIDC). See **[DEPLOY-AZURE.md](./DEPLOY-AZURE.md)** |
+| `frontend/` | **Azure Static Web Apps** | GitHub Actions (`azure-static-web-apps-frontend.yml`). See **[DEPLOY-AZURE.md](./DEPLOY-AZURE.md)** |
 
-> ☁️ **Deploying to Google Cloud instead?** See **[DEPLOY-GCP.md](./DEPLOY-GCP.md)** —
-> a step-by-step **Cloud Run** walkthrough (both services containerized) built for a
-> live corporate-training session.
+> ☁️ **Azure is the primary, fully-wired path → [DEPLOY-AZURE.md](./DEPLOY-AZURE.md).**
+> Other hosts are still supported: **Render** (`render.yaml`) + **Vercel** for the
+> frontend, or **Google Cloud Run** (**[DEPLOY-GCP.md](./DEPLOY-GCP.md)**).
 
 Source repo: <https://github.com/sanjula2003git/corporate_ai_version>
 

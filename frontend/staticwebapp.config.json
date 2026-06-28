@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "*.{css,js,png,jpg,svg,ico,json}"]
+  },
+  "responseOverrides": {
+    "404": { "rewrite": "/index.html" }
+  }
+}
