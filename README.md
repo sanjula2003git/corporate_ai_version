@@ -82,6 +82,10 @@ Frontend and backend are **two separate programs** → two separate services:
 | `backend/` | **Render** | `render.yaml` (Blueprint). Set `GEMINI_API_KEY` + `FRONTEND_ORIGINS` |
 | `frontend/` | **Vercel** | Root Directory = `frontend`. Set `VITE_API_URL` to the Render URL |
 
+> ☁️ **Deploying to Google Cloud instead?** See **[DEPLOY-GCP.md](./DEPLOY-GCP.md)** —
+> a step-by-step **Cloud Run** walkthrough (both services containerized) built for a
+> live corporate-training session.
+
 Source repo: <https://github.com/sanjula2003git/corporate_ai_version>
 
 > ⚠️ **Order matters.** The two services reference each other, so deploy the

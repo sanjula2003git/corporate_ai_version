@@ -1,0 +1,19 @@
+# Cloud Build recipe for the frontend image.
+# Needed because VITE_API_URL must be injected at BUILD time (Vite bakes it
+# into the JavaScript). Plain "gcloud run deploy --source" can't pass build
+# args, so we build here, then deploy the resulting image.
+#
+# Usage (fill in the two substitutions):
+#   gcloud builds submit --config cloudbuild.yaml \
+#     --substitutions=_VITE_API_URL=https://YOUR-BACKEND-URL,_IMAGE=REGION-docker.pkg.dev/PROJECT/REPO/frontend
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - VITE_API_URL=${_VITE_API_URL}
+      - -t
+      - ${_IMAGE}
+      - .
+images:
+  - ${_IMAGE}

@@ -1,0 +1,6 @@
+# Don't copy local builds or installed packages into the image —
+# the build stage reinstalls and rebuilds from scratch.
+node_modules/
+dist/
+.env
+.env.local
