@@ -8,7 +8,8 @@ gunicorn           # process manager Azure/Oryx uses to run uvicorn workers
 PyJWT              # login tokens (access pass)
 bcrypt             # password hashing
 python-multipart   # login form support
-sqlmodel           # database toolkit (SQLAlchemy + Pydantic) — talks to SQLite
+sqlmodel           # database toolkit (SQLAlchemy + Pydantic) — talks to SQLite / Postgres
+psycopg2-binary    # PostgreSQL driver — lets SQLAlchemy connect to Supabase (Postgres)
 
 # --- AI chat extras ---
 python-dotenv      # loads GEMINI_API_KEY / ANTHROPIC_API_KEY from a .env file

@@ -43,10 +43,23 @@ if DATABASE_URL.startswith("sqlite:////"):
     _abs = "/" + DATABASE_URL.split("sqlite:////", 1)[1]
     os.makedirs(os.path.dirname(_abs), exist_ok=True)
 
+# Supabase / Heroku sometimes hand out a "postgres://" URL, but SQLAlchemy only
+# accepts the modern "postgresql://" scheme. Normalise it so either one works.
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# The check_same_thread trick is a SQLite-ONLY quirk — passing it to Postgres
+# would crash on connect. So we only add it when we're actually on SQLite.
+if DATABASE_URL.startswith("sqlite"):
+    _connect_args = {"check_same_thread": False}    # needed for SQLite + FastAPI
+else:
+    _connect_args = {}                              # Postgres (Supabase) needs nothing here
+
 engine = create_engine(
     DATABASE_URL,
-    echo=False,                                   # ← flip to True to SEE the SQL
-    connect_args={"check_same_thread": False},    # needed for SQLite + FastAPI
+    echo=False,            # ← flip to True to SEE the SQL
+    connect_args=_connect_args,
+    pool_pre_ping=True,    # quietly reconnect if Supabase's pooler dropped an idle connection
 )
 
 
@@ -132,11 +145,16 @@ def init_db():
         ])
 
         # --- assignments (trainer -> course) ---
+        # NOTE: we DON'T hard-code id=1..4 here. Inserted in this order the DB
+        # auto-numbers them 1,2,3,4 anyway (which the submissions below rely on),
+        # AND it keeps Postgres/Supabase happy: hand-setting the id would leave
+        # Postgres's auto-increment sequence at 1, so the next trainer-created
+        # assignment would collide on id=1. Letting the DB assign ids avoids that.
         assignments = [
-            AssignmentDB(id=1, course="React Fundamentals", title="Build a Counter Component", description="Create a <Counter/> with increment/decrement using useState.", due_date="2026-06-12", max_marks=100, created_by="Suresh Rao"),
-            AssignmentDB(id=2, course="React Fundamentals", title="Todo List App",             description="Build a todo list with add/delete. Submit a link to your repo.", due_date="2026-06-20", max_marks=100, created_by="Suresh Rao"),
-            AssignmentDB(id=3, course="Java Backend",       title="CRUD REST Controller",      description="Implement a Spring Boot CRUD controller for a Book entity.",     due_date="2026-06-15", max_marks=100, created_by="Anita Sharma"),
-            AssignmentDB(id=4, course="Python Basics",      title="FizzBuzz + Functions",      description="Write FizzBuzz and three reusable helper functions.",           due_date="2026-06-08", max_marks=100, created_by="Priya Menon"),
+            AssignmentDB(course="React Fundamentals", title="Build a Counter Component", description="Create a <Counter/> with increment/decrement using useState.", due_date="2026-06-12", max_marks=100, created_by="Suresh Rao"),
+            AssignmentDB(course="React Fundamentals", title="Todo List App",             description="Build a todo list with add/delete. Submit a link to your repo.", due_date="2026-06-20", max_marks=100, created_by="Suresh Rao"),
+            AssignmentDB(course="Java Backend",       title="CRUD REST Controller",      description="Implement a Spring Boot CRUD controller for a Book entity.",     due_date="2026-06-15", max_marks=100, created_by="Anita Sharma"),
+            AssignmentDB(course="Python Basics",      title="FizzBuzz + Functions",      description="Write FizzBuzz and three reusable helper functions.",           due_date="2026-06-08", max_marks=100, created_by="Priya Menon"),
         ]
         session.add_all(assignments)
 
